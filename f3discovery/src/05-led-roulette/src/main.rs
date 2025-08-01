@@ -2,14 +2,22 @@
 #![no_main]
 #![no_std]
 
-use aux5::entry;
+const LED_DURATION: u16 = 5;
+
+use aux5::{entry, Delay, DelayMs, LedArray, OutputSwitch};
 
 #[entry]
 fn main() -> ! {
-    let _y;
-    let x = 42;
-    _y = x;
+    let (mut delay, mut leds): (Delay, LedArray) = aux5::init();
 
-    // infinite loop; just so we don't leave this stack frame
-    loop {}
+    loop {
+        for curr in 0..8 {
+            let next = (curr + 1) % 8;
+
+            leds[next].on().ok();
+            delay.delay_ms(LED_DURATION);
+            leds[curr].off().ok();
+            delay.delay_ms(LED_DURATION);
+        }
+    }
 }
