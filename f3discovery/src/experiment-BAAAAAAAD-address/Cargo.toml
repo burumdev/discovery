@@ -1,0 +1,8 @@
+[package]
+name = "experiment-BAAAAAAAD-address"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aux71 = { path = "auxiliary" }
+cortex-m = "0.7.7"
