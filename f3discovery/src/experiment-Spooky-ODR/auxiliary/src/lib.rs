@@ -13,12 +13,17 @@ pub use stm32f3_discovery::stm32f3xx_hal::pac::GPIOE;
 pub use stm32f3_discovery::{leds::Leds, stm32f3xx_hal};
 
 use stm32f3xx_hal::prelude::*;
-pub use stm32f3xx_hal::stm32;
+pub use stm32f3xx_hal::{delay::Delay, hal::blocking::delay::DelayMs, stm32};
 
 #[inline(never)]
-pub fn init() -> (ITM, &'static RegisterBlock) {
+pub fn init() -> (ITM, &'static RegisterBlock, Delay) {
     let device_periphs = stm32::Peripherals::take().unwrap();
+    let core_periphs = cortex_m::Peripherals::take().unwrap();
+
+    let mut flash = device_periphs.FLASH.constrain();
     let mut reset_and_clock_control = device_periphs.RCC.constrain();
+    let clocks = reset_and_clock_control.cfgr.freeze(&mut flash.acr);
+    let delay = Delay::new(core_periphs.SYST, clocks);
 
     // initialize user leds
     let mut gpioe = device_periphs.GPIOE.split(&mut reset_and_clock_control.ahb);
@@ -35,6 +40,9 @@ pub fn init() -> (ITM, &'static RegisterBlock) {
         &mut gpioe.otyper,
     );
 
-    let core_periphs = cortex_m::Peripherals::take().unwrap();
-    (core_periphs.ITM, unsafe { &*stm32f303::GPIOE::ptr() })
+    (
+        core_periphs.ITM,
+        unsafe { &*stm32f303::GPIOE::ptr() },
+        delay,
+    )
 }

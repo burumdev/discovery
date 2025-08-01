@@ -4,7 +4,7 @@
 use core::ptr;
 
 #[allow(unused_imports)]
-use aux72::{ITM, entry, iprintln};
+use aux72::{DelayMs, ITM, entry, iprintln};
 
 const GPIOE_ODR: u32 = 0x4800_1014;
 const GPIOE_BSRR: u32 = 0x4800_1018;
@@ -21,7 +21,7 @@ fn iprint_odr(itm: &mut ITM) {
 
 #[entry]
 fn start() -> ! {
-    let (mut itm, _) = aux72::init();
+    let (mut itm, _, mut delay) = aux72::init();
 
     unsafe {
         // A magic addresses!
@@ -64,5 +64,24 @@ fn start() -> ! {
         iprint_odr(&mut itm);
     }
 
-    loop {}
+    loop {
+        // We can also manipulate compass LEDs through ODR
+        // Here blinking the North LED 500ms period
+        // And blinking the Green LED twice that speed (250ms period)
+
+        // Toggle red LED (bit 9) using XOR - preserves other bits
+        unsafe {
+            let current = ptr::read_volatile(GPIOE_ODR as *const u32);
+            ptr::write_volatile(GPIOE_ODR as *mut u32, current ^ (1 << 9));
+        }
+
+        for _ in 0..2 {
+            // Toggle green LED (bit 11) using XOR
+            unsafe {
+                let current = ptr::read_volatile(GPIOE_ODR as *const u32);
+                ptr::write_volatile(GPIOE_ODR as *mut u32, current ^ (1 << 11));
+            }
+            delay.delay_ms(125_u16);
+        }
+    }
 }
