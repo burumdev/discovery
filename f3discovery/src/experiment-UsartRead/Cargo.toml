@@ -1,0 +1,7 @@
+[package]
+name = "experiment-UsartRead"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aux112 = { path = "auxiliary" }
