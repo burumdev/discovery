@@ -9,7 +9,7 @@ members = [
   "src/14-i2c",
   "src/15-led-compass",
   "src/16-punch-o-meter",
-  "src/experiment-BAAAAAAAD-address", "src/experiment-BitCounter", "src/experiment-Spooky-ODR", "src/experiment-Typesafe-BSRR", "src/experiment-Uprintln", "src/experiment-UsartRead",
+  "src/experiment-BAAAAAAAD-address", "src/experiment-BitCounter", "src/experiment-Spooky-ODR", "src/experiment-Typesafe-BSRR", "src/experiment-Uprintln", "src/experiment-UsartEchoChamber", "src/experiment-UsartRead",
 ]
 
 [profile.release]
